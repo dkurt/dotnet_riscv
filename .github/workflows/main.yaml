@@ -17,10 +17,10 @@ jobs:
     steps:
     - name: Clone repository
       run: |
-        git clone --depth 1 -b ${{VERSION}} https://github.com/dotnet/runtime
-        git clone --depth 1 -b ${{VERSION}} https://github.com/dotnet/sdk
-        git clone --depth 1 -b ${{VERSION}} https://github.com/dotnet/aspnetcore
-        git clone --depth 1 -b ${{VERSION}} https://github.com/dotnet/installer
+        git clone --depth 1 -b ${{env.VERSION}} https://github.com/dotnet/runtime
+        git clone --depth 1 -b ${{env.VERSION}} https://github.com/dotnet/sdk
+        git clone --depth 1 -b ${{env.VERSION}} https://github.com/dotnet/aspnetcore
+        git clone --depth 1 -b ${{env.VERSION}} https://github.com/dotnet/installer
 
     - name: Build runtime
       run: |
