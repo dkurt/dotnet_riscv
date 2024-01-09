@@ -12,7 +12,7 @@ jobs:
         DOWNLOADDIR: ${{ github.workspace }}/downloads
         OUTPUTDIR: ${{ github.workspace }}/output
         RUNTIME_VERSION: 8.0.0-rtm.23531.3
-        SDK_VERSION: 8.0.100-rtm.23506.1
+        SDK_VERSION: 8.0.100-rtm.23551.6
         ROOTFS_DIR: "/crossrootfs/riscv64"
 
     steps:
@@ -49,15 +49,13 @@ jobs:
         cd sdk
         ./build.sh --pack --ci -c Release /p:Architecture=riscv64 /p:OfficialBuildId=$(version_build_id ${SDK_VERSION})
         mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
-        cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
+        cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
         cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Common.*.nupkg ${PACKAGESDIR}
 
     # - name: Build aspnetcore
     #   run: |
     #     cd aspnetcore
-    #     sed -i 's|linux-arm64|linux-riscv64|' eng/Dependencies.props
-
-    #     ./eng/build.sh --pack --ci -c Release -arch riscv64 /p:DotNetRuntimeArchive=/workdir/downloads/Runtime/8.0.0-rtm.23531.3/dotnet-runtime-8.0.0-linux-riscv64.tar.gz
+    #     ./eng/build.sh --pack --ci -c Release -arch riscv64 -- /p:PublicBaseURL=file://${DOWNLOADDIR}/
 
 
     #     cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
@@ -73,8 +71,8 @@ jobs:
         ./build.sh --ci -c Release -a riscv64 /p:HostRid=linux-x64 -- /p:PublicBaseURL=file://${DOWNLOADDIR}/
         cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz ${OUTPUTDIR}
 
-    # - name: Upload .NET
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: dotnet-sdk-linux-riscv64
-    #     path: ${OUTPUTDIR}/dotnet-sdk-*-linux-riscv64.tar.gz
+    - name: Upload .NET
+      uses: actions/upload-artifact@v2
+      with:
+        name: dotnet-sdk-linux-riscv64
+        path: ${OUTPUTDIR}/dotnet-sdk-*-linux-riscv64.tar.gz
