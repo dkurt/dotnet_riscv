@@ -2,16 +2,16 @@ name: Build .NET SDK
 
 on: [workflow_dispatch, pull_request]
 
-env:
-  PACKAGESDIR: ${{ github.workspace }}/packages
-  DOWNLOADDIR: ${{ github.workspace }}/downloads
-  OUTPUTDIR: ${{ github.workspace }}/output
-  ROOTFS_DIR: "/crossrootfs/riscv64"
-
 jobs:
   run:
-    runs-on: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-riscv64
-    name: Build
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-riscv64
+      env:
+        PACKAGESDIR: ${{ github.workspace }}/packages
+        DOWNLOADDIR: ${{ github.workspace }}/downloads
+        OUTPUTDIR: ${{ github.workspace }}/output
+        ROOTFS_DIR: "/crossrootfs/riscv64"
 
     steps:
     - name: Clone repository
