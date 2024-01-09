@@ -7,7 +7,6 @@ env:
   DOWNLOADDIR: ${{ github.workspace }}/downloads
   OUTPUTDIR: ${{ github.workspace }}/output
   ROOTFS_DIR: "/crossrootfs/riscv64"
-  VERSION: "v8.0.0"
 
 jobs:
   run:
@@ -17,24 +16,24 @@ jobs:
     steps:
     - name: Clone repository
       run: |
-        git clone --depth 1 -b ${{env.VERSION}} https://github.com/dotnet/runtime
-        git clone --depth 1 -b ${{env.VERSION}} https://github.com/dotnet/sdk
-        git clone --depth 1 -b ${{env.VERSION}} https://github.com/dotnet/aspnetcore
-        git clone --depth 1 -b ${{env.VERSION}} https://github.com/dotnet/installer
+        git clone --depth 1 -b v8.0.0 https://github.com/dotnet/runtime
+        git clone --depth 1 -b v8.0.100 https://github.com/dotnet/sdk
+        git clone --depth 1 -b v8.0.0 https://github.com/dotnet/aspnetcore
+        git clone --depth 1 -b v8.0.100 https://github.com/dotnet/installer
 
     - name: Build runtime
       run: |
         cd runtime
         ./build.sh --ci -c Release --cross --arch riscv64
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Host.linux-ppc64le.*.nupkg ${PACKAGESDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Runtime.linux-ppc64le.*.nupkg ${PACKAGESDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/dotnet-runtime-*-linux-ppc64le.tar.gz ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/dotnet-runtime-*-linux-ppc64le.tar.gz ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Host.linux-ppc64le.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Runtime.linux-ppc64le.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-ppc64le.Microsoft.NETCore.DotNetHost.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-ppc64le.Microsoft.NETCore.DotNetHostPolicy.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-ppc64le.Microsoft.NETCore.DotNetHostResolver.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-ppc64le.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-ppc64le.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${OUTPUTDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHost.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostPolicy.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostResolver.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
