@@ -6,7 +6,7 @@ env:
   PACKAGESDIR: ${{ github.workspace }}/packages
   DOWNLOADDIR: ${{ github.workspace }}/downloads
   OUTPUTDIR: ${{ github.workspace }}/output
-  ROOTFS_DIR: /crossrootfs/riscv64/
+  ROOTFS_DIR: "/crossrootfs/riscv64"
   VERSION: "v8.0.0"
 
 jobs:
