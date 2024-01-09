@@ -11,29 +11,55 @@ jobs:
         PACKAGESDIR: ${{ github.workspace }}/packages
         DOWNLOADDIR: ${{ github.workspace }}/downloads
         OUTPUTDIR: ${{ github.workspace }}/output
+        VERSION: "8.0.0"
         ROOTFS_DIR: "/crossrootfs/riscv64"
 
     steps:
-    - name: Clone repository
+    - name: Clone repositories
       run: |
-        git clone --depth 1 -b v8.0.0 https://github.com/dotnet/runtime
+        git clone --depth 1 -b v${VERSION} https://github.com/dotnet/runtime
+        git clone --depth 1 -b v${VERSION} https://github.com/dotnet/aspnetcore
         git clone --depth 1 -b v8.0.100 https://github.com/dotnet/sdk
-        git clone --depth 1 -b v8.0.0 https://github.com/dotnet/aspnetcore
         git clone --depth 1 -b v8.0.100 https://github.com/dotnet/installer
 
     - name: Build runtime
       run: |
         cd runtime
         ./build.sh --ci -c Release --cross --arch riscv64
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
-        mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHost.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostPolicy.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostResolver.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/${RUNTIME_CONF}/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
+        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
+        mkdir -p ${DOWNLOADDIR}/Runtime/${VERSION}
+        cp artifacts/packages/Release/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/Runtime/${VERSION}
+        cp artifacts/packages/Release/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHost.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostPolicy.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostResolver.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
+
+    - name: Build SDK
+      run: |
+        cd sdk
+        ./build.sh --pack --ci -c Release /p:Architecture=riscv64
+        mkdir -p ${DOWNLOADDIR}/Sdk/${VERSION}
+        cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${VERSION}
+        cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Common.*.nupkg ${PACKAGESDIR}
+
+    - name: Build aspnetcore
+      run: |
+        cd aspnetcore
+        ./eng/build.sh --pack --ci -c Release -arch riscv64 /p:DotNetAssetRootUrl=file://${DOWNLOADDIR}/
+        cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
+        mkdir -p ${DOWNLOADDIR}/aspnetcore/Runtime/${VERSION}
+        cp artifacts/installers/Release/aspnetcore-runtime-internal-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${VERSION}
+        cp artifacts/installers/Release/aspnetcore_base_runtime.version ${DOWNLOADDIR}/aspnetcore/Runtime/${VERSION}
+        cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Web.*.nupkg ${PACKAGESDIR}
+
+    - name: Build installer
+      run: |
+        cd installer
+        ./build.sh --ci -c Release -a riscv64 /p:HostRid=linux-x64 /p:PublicBaseURL=file://${DOWNLOADDIR}/
+        cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz ${OUTPUTDIR}
