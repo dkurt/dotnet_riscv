@@ -89,7 +89,7 @@ jobs:
         cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz ${OUTPUTDIR}
 
     - name: Upload .NET
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: dotnet-sdk-linux-riscv64
-        path: ${OUTPUTDIR}/dotnet-sdk-*-linux-riscv64.tar.gz
+        path: "${OUTPUTDIR}/dotnet-sdk-*-linux-riscv64.tar.gz"
