@@ -13,7 +13,7 @@ jobs:
         OUTPUTDIR: ${{ github.workspace }}/output
         RUNTIME_VERSION: 8.0.0-rtm.23531.3
         SDK_VERSION: 8.0.100-rtm.23551.6
-        ASPNETCORE_VERSION: 8.0.0
+        ASPNETCORE_VERSION: 8.0.0-rtm.23531.12
         ROOTFS_DIR: /crossrootfs/riscv64
 
     steps:
@@ -62,8 +62,8 @@ jobs:
     - name: Build aspnetcore
       run: |
         cd aspnetcore
-        sed -i 's|||'
-        sed -i 's|$(BaseIntermediateOutputPath)$(DotNetRuntimeArchiveFileName)|/workdir/downloads/Runtime/8.0.0/dotnet-runtime-8.0.0-linux-riscv64.tar.gz|' src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
+        sed -i "s|ppc64le|riscv64|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
+        sed -i "s|\$(BaseIntermediateOutputPath)\$(DotNetRuntimeArchiveFileName)|${DOWNLOADDIR}/Runtime/8.0.0/dotnet-runtime-8.0.0-linux-riscv64.tar.gz|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
         ./eng/build.sh --pack --ci -c Release -arch riscv64 /p:DotNetAssetRootUrl=file://${DOWNLOADDIR}/
 
         cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
