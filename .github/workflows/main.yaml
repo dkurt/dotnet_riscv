@@ -15,7 +15,9 @@ jobs:
         SDK_VERSION: 8.0.100-rtm.23551.6
         ASPNETCORE_VERSION: 8.0.0-rtm.23531.12
         ROOTFS_DIR: /crossrootfs/riscv64
-
+      volumes:
+        - ${{ github.workspace }}/output:${{ github.workspace }}/output
+        
     steps:
     - name: Clone repositories
       run: |
@@ -88,10 +90,9 @@ jobs:
         ./build.sh --ci -c Release -a riscv64 /p:HostRid=linux-x64 /p:PublicBaseURL=file://${DOWNLOADDIR}/
         cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz.sha512 ${OUTPUTDIR}
-        ls ${OUTPUTDIR}
 
     - name: Upload .NET
       uses: actions/upload-artifact@v4
       with:
         name: dotnet-sdk-linux-riscv64
-        path: "${{ github.workspace }}/output/dotnet-sdk-8.0.100-linux-riscv64.tar.gz"
+        path: "${{ github.workspace }}/output/dotnet-sdk-*-linux-riscv64.tar.gz.*"
