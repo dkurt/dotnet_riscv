@@ -94,4 +94,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: dotnet-sdk-linux-riscv64
-        path: "${{ env.OUTPUTDIR }}/dotnet-sdk-8.0.100-linux-riscv64.tar.gz"
+        path: "${{ github.workspace }}/output/dotnet-sdk-8.0.100-linux-riscv64.tar.gz"
