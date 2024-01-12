@@ -12,8 +12,8 @@ jobs:
         DOWNLOADDIR: ${{ github.workspace }}/downloads
         OUTPUTDIR: ${{ github.workspace }}/output
         RUNTIME_VERSION: 8.0.1-servicing.23580.1
-        SDK_VERSION: 8.0.100-rtm.23551.6
-        ASPNETCORE_VERSION: 8.0.0-rtm.23531.12
+        SDK_VERSION: 8.0.101-servicing.23580.21
+        ASPNETCORE_VERSION: 8.0.1-servicing.23580.8
         ROOTFS_DIR: /crossrootfs/riscv64
       volumes:
         - ${{ github.workspace }}/output:${{ github.workspace }}/output
