@@ -39,7 +39,7 @@ jobs:
         mkdir -p ${OUTPUTDIR}
 
         cd runtime
-        ./build.sh --ci -c Release --cross --arch riscv64
+        ./build.sh --ci -c Release --cross --arch riscv64 /p:PublishTrimmed=false /p:EnableTrimAnalyzer=false /p:IsTrimmable=false /p:EnableSingleFileAnalyzer=false
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
