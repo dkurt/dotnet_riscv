@@ -23,8 +23,8 @@ jobs:
       run: |
         git clone --depth 1 -b v8.0.1 https://github.com/dotnet/runtime
         git clone --depth 1 -b v8.0.1 https://github.com/dotnet/aspnetcore --recurse-submodules
-        git clone --depth 1 -b v8.0.1 https://github.com/dotnet/sdk
-        git clone --depth 1 -b v8.0.1 https://github.com/dotnet/installer
+        git clone --depth 1 -b v8.0.101 https://github.com/dotnet/sdk
+        git clone --depth 1 -b v8.0.101 https://github.com/dotnet/installer
 
     - name: Update Node.js
       run: |
