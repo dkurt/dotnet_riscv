@@ -83,6 +83,7 @@ jobs:
       run: |
         cd installer && git checkout 3ea0b6b9632340ead4036fbedee4597daac29a8d
         cp ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-${RUNTIME_VERSION}-linux-riscv64.tar.gz
+        cp ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-${ASPNETCORE_VERSION}-linux-riscv64.tar.gz 
         sed -i "s|linux-arm64|linux-riscv64|" src/redist/targets/GenerateBundledVersions.targets
         sed -i "s|linux-arm64|linux-riscv64|" src/SourceBuild/content/eng/bootstrap/buildBootstrapPreviouslySB.csproj
         sed -i s'|ppc64le|riscv64|' Directory.Build.props
