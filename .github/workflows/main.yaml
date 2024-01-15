@@ -40,7 +40,7 @@ jobs:
 
         cd runtime && git checkout 22ba7d607bb1d9caa0db9afcdc47eb5cef641fcb
         sed -i 's|ppc64le|riscv64|' eng/Subsets.props
-        ./build.sh --ci -c Release --cross --arch riscv64 /p:OfficialBuildId=${RUNTIME_VERSION}
+        ./build.sh --ci -c Release --cross --arch riscv64 /p:Version=${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
@@ -56,7 +56,7 @@ jobs:
     - name: Build SDK
       run: |
         cd sdk && git checkout 231e921dd53cb4f57acfae42b5984e4103d6b557
-        ./build.sh --pack --ci -c Release /p:Architecture=riscv64 /p:OfficialBuildId=${SDK_VERSION}
+        ./build.sh --pack --ci -c Release /p:Architecture=riscv64
         mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
         cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
         cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Common.*.nupkg ${PACKAGESDIR}
@@ -69,7 +69,7 @@ jobs:
         git submodule update --recursive
         sed -i "s|ppc64le|riscv64|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
         sed -i "s|\$(BaseIntermediateOutputPath)\$(DotNetRuntimeArchiveFileName)|${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-9.0.0-ci-linux-riscv64.tar.gz|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
-        ./eng/build.sh --pack --ci -c Release -arch riscv64 /p:DotNetAssetRootUrl=file://${DOWNLOADDIR}/ /p:OfficialBuildId=${ASPNETCORE_VERSION}
+        ./eng/build.sh --pack --ci -c Release -arch riscv64 /p:DotNetAssetRootUrl=file://${DOWNLOADDIR}/
 
         cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
