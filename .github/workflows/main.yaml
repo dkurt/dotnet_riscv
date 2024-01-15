@@ -11,9 +11,9 @@ jobs:
         PACKAGESDIR: ${{ github.workspace }}/packages
         DOWNLOADDIR: ${{ github.workspace }}/downloads
         OUTPUTDIR: ${{ github.workspace }}/output
-        RUNTIME_VERSION: 9.0.0-alpha.1.24063.6
-        SDK_VERSION: 9.0.0-rtm.23551.6
-        ASPNETCORE_VERSION: 9.0.0-rtm.23531.12
+        RUNTIME_VERSION: 9.0.0-alpha.1.24061.26
+        SDK_VERSION: 9.0.100-alpha.1.24062.7
+        ASPNETCORE_VERSION: 9.0.0-alpha.1.24061.8
         ROOTFS_DIR: /crossrootfs/riscv64
       volumes:
         - ${{ github.workspace }}/output:${{ github.workspace }}/output
@@ -21,9 +21,9 @@ jobs:
     steps:
     - name: Clone repositories
       run: |
-        git clone --depth 1 https://github.com/dotnet/runtime
-        git clone --depth 1 https://github.com/dotnet/aspnetcore --recurse-submodules
-        git clone --depth 1 https://github.com/dotnet/sdk
+        git clone -b 22ba7d607bb1d9caa0db9afcdc47eb5cef641fcb https://github.com/dotnet/runtime
+        git clone -b a19c70eba3f89c7cbe9447f029b4c63322f47846 https://github.com/dotnet/aspnetcore --recurse-submodules
+        git clone -b 231e921dd53cb4f57acfae42b5984e4103d6b557 https://github.com/dotnet/sdk
         git clone --depth 1 https://github.com/dotnet/installer
 
     - name: Update Node.js
@@ -66,7 +66,7 @@ jobs:
       run: |
         cd aspnetcore
         sed -i "s|ppc64le|riscv64|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
-        sed -i "s|\$(BaseIntermediateOutputPath)\$(DotNetRuntimeArchiveFileName)|${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-9.0.0-alpha.1.24063.6-linux-riscv64.tar.gz|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
+        sed -i "s|\$(BaseIntermediateOutputPath)\$(DotNetRuntimeArchiveFileName)|${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-9.0.0-ci-linux-riscv64.tar.gz|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
         ./eng/build.sh --pack --ci -c Release -arch riscv64 /p:DotNetAssetRootUrl=file://${DOWNLOADDIR}/
 
         cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
