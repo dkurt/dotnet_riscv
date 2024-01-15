@@ -24,7 +24,7 @@ jobs:
         git clone -b 22ba7d607bb1d9caa0db9afcdc47eb5cef641fcb https://github.com/dotnet/runtime
         git clone -b a19c70eba3f89c7cbe9447f029b4c63322f47846 https://github.com/dotnet/aspnetcore --recurse-submodules
         git clone -b 231e921dd53cb4f57acfae42b5984e4103d6b557 https://github.com/dotnet/sdk
-        git clone --depth 1 https://github.com/dotnet/installer
+        git clone -b 3ea0b6b9632340ead4036fbedee4597daac29a8d https://github.com/dotnet/installer
 
     - name: Update Node.js
       run: |
