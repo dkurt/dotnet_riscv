@@ -50,6 +50,8 @@ jobs:
         cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHost.*.nupkg ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostPolicy.*.nupkg ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostResolver.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/NonShipping/runtime.linux-riscv64.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/NonShipping/runtime.linux-riscv64.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
         cd .. && rm -r runtime
 
     - name: Build SDK
