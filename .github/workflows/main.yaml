@@ -21,10 +21,10 @@ jobs:
     steps:
     - name: Clone repositories
       run: |
-        git clone -b 22ba7d607bb1d9caa0db9afcdc47eb5cef641fcb https://github.com/dotnet/runtime
-        git clone -b a19c70eba3f89c7cbe9447f029b4c63322f47846 https://github.com/dotnet/aspnetcore --recurse-submodules
-        git clone -b 231e921dd53cb4f57acfae42b5984e4103d6b557 https://github.com/dotnet/sdk
-        git clone -b 3ea0b6b9632340ead4036fbedee4597daac29a8d https://github.com/dotnet/installer
+        git clone https://github.com/dotnet/runtime
+        git clone https://github.com/dotnet/aspnetcore
+        git clone https://github.com/dotnet/sdk
+        git clone https://github.com/dotnet/installer
 
     - name: Update Node.js
       run: |
@@ -38,7 +38,7 @@ jobs:
         mkdir -p ${DOWNLOADDIR}
         mkdir -p ${OUTPUTDIR}
 
-        cd runtime
+        cd runtime && git checkout 22ba7d607bb1d9caa0db9afcdc47eb5cef641fcb
         sed -i 's|ppc64le|riscv64|' eng/Subsets.props
         ./build.sh --ci -c Release --cross --arch riscv64
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
@@ -55,7 +55,7 @@ jobs:
 
     - name: Build SDK
       run: |
-        cd sdk
+        cd sdk && git checkout 231e921dd53cb4f57acfae42b5984e4103d6b557
         ./build.sh --pack --ci -c Release /p:Architecture=riscv64
         mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
         cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
@@ -64,7 +64,9 @@ jobs:
 
     - name: Build aspnetcore
       run: |
-        cd aspnetcore
+        cd aspnetcore && git checkout a19c70eba3f89c7cbe9447f029b4c63322f47846
+        git submodule init
+        git submodule update --recursive
         sed -i "s|ppc64le|riscv64|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
         sed -i "s|\$(BaseIntermediateOutputPath)\$(DotNetRuntimeArchiveFileName)|${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-9.0.0-ci-linux-riscv64.tar.gz|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
         ./eng/build.sh --pack --ci -c Release -arch riscv64 /p:DotNetAssetRootUrl=file://${DOWNLOADDIR}/
@@ -79,7 +81,7 @@ jobs:
 
     - name: Build installer
       run: |
-        cd installer
+        cd installer && git checkout 3ea0b6b9632340ead4036fbedee4597daac29a8d
         sed -i "s|linux-arm64|linux-riscv64|" src/redist/targets/GenerateBundledVersions.targets
         sed -i "s|linux-arm64|linux-riscv64|" src/SourceBuild/content/eng/bootstrap/buildBootstrapPreviouslySB.csproj
         sed -i s'|ppc64le|riscv64|' Directory.Build.props
