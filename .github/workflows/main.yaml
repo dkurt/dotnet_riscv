@@ -11,10 +11,14 @@ jobs:
         PACKAGESDIR: ${{ github.workspace }}/packages
         DOWNLOADDIR: ${{ github.workspace }}/downloads
         OUTPUTDIR: ${{ github.workspace }}/output
-        RUNTIME_VERSION: 9.0.0-alpha.1.23618.7
-        SDK_VERSION: 9.0.100-alpha.1.23619.2
-        ASPNETCORE_VERSION: 9.0.0-alpha.1.23618.5
+        RUNTIME_VERSION: 9.0.0-alpha.1.23612.13
+        SDK_VERSION: 9.0.100-alpha.1.23613.1
+        ASPNETCORE_VERSION: 9.0.0-alpha.1.23612.4
         ROOTFS_DIR: /crossrootfs/riscv64
+        RUNTIME_REVISION: ab1a8224cdf115b65e0db5dc88d11f205068f444
+        SDK_REVISION: 6ad1cd1de740d3332af31bd57afef0070b7a3329
+        ASPNETCORE_REVISION: 459a4884bf3ccd1f50ada2244a6c2da6a939ae0d
+        INSTALLER_REVISION: c947c12af4c15c0b402359d268796ec148bb7eb2
       volumes:
         - ${{ github.workspace }}/output:${{ github.workspace }}/output
 
@@ -38,7 +42,7 @@ jobs:
         mkdir -p ${DOWNLOADDIR}
         mkdir -p ${OUTPUTDIR}
 
-        cd runtime && git checkout c282395b63c1757d4f4c1dc2e236680cfe2e7f96
+        cd runtime && git checkout ${RUNTIME_REVISION}
         sed -i 's|ppc64le|riscv64|' eng/Subsets.props
         ./build.sh --ci -c Release --cross --arch riscv64 /p:Version=${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
@@ -55,7 +59,7 @@ jobs:
 
     - name: Build SDK
       run: |
-        cd sdk && git checkout 7a23eb71c9afea23d3261eba01368a394329bcd3
+        cd sdk && git checkout ${SDK_REVISION}
         ./build.sh --pack --ci -c Release /p:Architecture=riscv64
         mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
         cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
@@ -64,7 +68,7 @@ jobs:
 
     - name: Build aspnetcore
       run: |
-        cd aspnetcore && git checkout 640e12221629f0cf5226370bb48064203491e11e
+        cd aspnetcore && git checkout ${ASPNETCORE_REVISION}
         git submodule init
         git submodule update --recursive
         sed -i "s|ppc64le|riscv64|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
@@ -81,7 +85,7 @@ jobs:
 
     - name: Build installer
       run: |
-        cd installer && git checkout 58e5a37be6edeca35d6389fde0c855465c627cbd
+        cd installer && git checkout ${INSTALLER_REVISION}
         cp ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-${ASPNETCORE_VERSION}-linux-riscv64.tar.gz
         sed -i "s|linux-arm64|linux-riscv64|" src/redist/targets/GenerateBundledVersions.targets
         sed -i "s|linux-arm64|linux-riscv64|" src/SourceBuild/content/eng/bootstrap/buildBootstrapPreviouslySB.csproj
