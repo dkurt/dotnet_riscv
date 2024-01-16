@@ -49,16 +49,16 @@ jobs:
         cp dotnet-runtime-*-linux-riscv64.tar.gz ../artifacts/packages/Release/Shipping
         cd ..
         
-        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
-        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
+        # cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
+        # cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetAppHost.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
+        # cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${OUTPUTDIR}
+        # cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
+        # cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetAppHost.*.nupkg ${OUTPUTDIR}
+        # cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
+        # cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
         cd .. && rm -r runtime
 
     - name: Build SDK
