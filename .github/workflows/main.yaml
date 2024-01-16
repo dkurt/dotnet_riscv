@@ -39,6 +39,7 @@ jobs:
         mkdir -p ${OUTPUTDIR}
 
         cd runtime && git checkout 22ba7d607bb1d9caa0db9afcdc47eb5cef641fcb
+        sed -i 's|ppc64le|riscv64|' eng/Subsets.props
         ./build.sh -s host+libs+clr --ci -c Release --cross --arch riscv64 /p:Version=${RUNTIME_VERSION}
 
         mkdir package && cd package
