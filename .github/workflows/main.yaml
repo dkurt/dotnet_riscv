@@ -16,7 +16,7 @@ jobs:
         ASPNETCORE_VERSION: 9.0.0-alpha.1.23612.4
         ROOTFS_DIR: /crossrootfs/riscv64
         RUNTIME_REVISION: ab1a8224cdf115b65e0db5dc88d11f205068f444
-        SDK_REVISION: 6ad1cd1de740d3332af31bd57afef0070b7a3329
+        SDK_REVISION: v8.0.1
         ASPNETCORE_REVISION: 459a4884bf3ccd1f50ada2244a6c2da6a939ae0d
         INSTALLER_REVISION: c947c12af4c15c0b402359d268796ec148bb7eb2
       volumes:
@@ -60,7 +60,7 @@ jobs:
     - name: Build SDK
       run: |
         cd sdk && git checkout ${SDK_REVISION}
-        ./build.sh --pack --ci -c Release /p:Architecture=riscv64
+        ./build.sh --pack --ci -c Release /p:Architecture=riscv64 /p:Version=${SDK_VERSION}
         mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
         cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
         cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Common.*.nupkg ${PACKAGESDIR}
