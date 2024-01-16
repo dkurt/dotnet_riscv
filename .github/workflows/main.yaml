@@ -45,8 +45,8 @@ jobs:
         mkdir -p dotnet/host/fxr/9.0.0
         cp ../artifacts/bin/linux-riscv64.Release/corehost/libhostfxr.so dotnet/host/fxr/9.0.0
         cp -r ../artifacts/bin/testhost/net9.0-linux-Release-riscv64/shared .
-        tar -czvf dotnet-runtime-9.0.0-linux-riscv64.tar.gz *
-        cp dotnet-runtime-9.0.0-linux-riscv64.tar.gz ../artifacts/packages/Release/Shipping
+        tar -czvf dotnet-runtime-${RUNTIME_VERSION}-linux-riscv64.tar.gz *
+        cp dotnet-runtime-*-linux-riscv64.tar.gz ../artifacts/packages/Release/Shipping
         cd ..
         
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
