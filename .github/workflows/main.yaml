@@ -11,13 +11,13 @@ jobs:
         PACKAGESDIR: ${{ github.workspace }}/packages
         DOWNLOADDIR: ${{ github.workspace }}/downloads
         OUTPUTDIR: ${{ github.workspace }}/output
-        RUNTIME_VERSION: 9.0.0-alpha.1.23612.13
-        SDK_VERSION: 9.0.100-alpha.1.23613.1
-        ASPNETCORE_VERSION: 9.0.0-alpha.1.23612.4
+        RUNTIME_VERSION: 9.0.0-alpha.1.23470.17
+        SDK_VERSION: 9.0.100-alpha.1.23477.63
+        ASPNETCORE_VERSION: 9.0.0-alpha.1.23470.9
         ROOTFS_DIR: /crossrootfs/riscv64
-        RUNTIME_REVISION: ab1a8224cdf115b65e0db5dc88d11f205068f444
-        SDK_REVISION: v8.0.101
-        ASPNETCORE_REVISION: 459a4884bf3ccd1f50ada2244a6c2da6a939ae0d
+        RUNTIME_REVISION: 571df3ef8e741c68d4a682ed54a086876d1b6514
+        SDK_REVISION: b575887007e9390607cdff70621cdbeb59896314
+        ASPNETCORE_REVISION: fa54329186df2e11b40bdfec4ae08f16fdbe9d99
         INSTALLER_REVISION: c947c12af4c15c0b402359d268796ec148bb7eb2
       volumes:
         - ${{ github.workspace }}/output:${{ github.workspace }}/output
@@ -43,7 +43,6 @@ jobs:
         mkdir -p ${OUTPUTDIR}
 
         cd runtime && git checkout ${RUNTIME_REVISION}
-        sed -i 's|ppc64le|riscv64|' eng/Subsets.props
         ./build.sh --ci -c Release --cross --arch riscv64 /p:Version=${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
