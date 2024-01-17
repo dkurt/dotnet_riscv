@@ -85,7 +85,6 @@ jobs:
     - name: Build installer
       run: |
         cd installer && git checkout ${INSTALLER_REVISION}
-        cp ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-${ASPNETCORE_VERSION}-linux-riscv64.tar.gz
         sed -i "s|linux-arm64|linux-riscv64|" src/redist/targets/GenerateBundledVersions.targets
         sed -i "s|linux-arm64|linux-riscv64|" src/SourceBuild/content/eng/bootstrap/buildBootstrapPreviouslySB.csproj
         sed -i s'|ppc64le|riscv64|' Directory.Build.props
