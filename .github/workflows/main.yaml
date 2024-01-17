@@ -11,14 +11,14 @@ jobs:
         PACKAGESDIR: ${{ github.workspace }}/packages
         DOWNLOADDIR: ${{ github.workspace }}/downloads
         OUTPUTDIR: ${{ github.workspace }}/output
-        RUNTIME_VERSION: 9.0.0-alpha.1.23470.17
-        SDK_VERSION: 9.0.100-alpha.1.23477.63
-        ASPNETCORE_VERSION: 9.0.0-alpha.1.23470.9
+        RUNTIME_VERSION: 9.0.0-alpha.1.24061.26
+        SDK_VERSION: 9.0.100-alpha.1.24062.7
+        ASPNETCORE_VERSION: 9.0.0-alpha.1.24061.8
         ROOTFS_DIR: /crossrootfs/riscv64
         RUNTIME_REVISION: 571df3ef8e741c68d4a682ed54a086876d1b6514
-        SDK_REVISION: b575887007e9390607cdff70621cdbeb59896314
-        ASPNETCORE_REVISION: fa54329186df2e11b40bdfec4ae08f16fdbe9d99
-        INSTALLER_REVISION: c947c12af4c15c0b402359d268796ec148bb7eb2
+        SDK_REVISION: 231e921dd53cb4f57acfae42b5984e4103d6b557
+        ASPNETCORE_REVISION: a19c70eba3f89c7cbe9447f029b4c63322f47846
+        INSTALLER_REVISION: f708a59e1a4e1acfb163505297fa904e6543ea3f
       volumes:
         - ${{ github.workspace }}/output:${{ github.workspace }}/output
 
