@@ -6,7 +6,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:23.04
+      image: ubuntu:23.10
       env:
         PACKAGESDIR: ${{ github.workspace }}/packages
         DOWNLOADDIR: ${{ github.workspace }}/downloads
