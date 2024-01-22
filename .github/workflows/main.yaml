@@ -36,7 +36,6 @@ jobs:
             libicu-dev:riscv64 \
             liblttng-ust-dev:riscv64
 
-        rm /usr/bin/gcc* /usr/bin/g++*
         ln -s /usr/bin/riscv64-linux-gnu-gcc /usr/bin/gcc
         ln -s /usr/bin/riscv64-linux-gnu-g++ /usr/bin/g++
     
