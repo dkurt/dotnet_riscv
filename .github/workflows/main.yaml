@@ -27,7 +27,7 @@ jobs:
         apt-get install -y --no-install-recommends \
             ca-certificates \
             python3-minimal \
-            python3-pip \
+            python3-libxml2 \
             git \
             wget \
             cmake \
@@ -37,8 +37,6 @@ jobs:
             libssl-dev:riscv64 \
             libicu-dev:riscv64 \
             liblttng-ust-dev:riscv64
-
-        python3 -m pip install xml --break-system-packages
 
         ln -s /usr/bin/riscv64-linux-gnu-gcc /usr/bin/gcc
         ln -s /usr/bin/riscv64-linux-gnu-g++ /usr/bin/g++
