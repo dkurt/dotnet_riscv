@@ -38,7 +38,7 @@ jobs:
             libicu-dev:riscv64 \
             liblttng-ust-dev:riscv64
 
-        python3 -m pip install xml
+        python3 -m pip install xml --break-system-packages
 
         ln -s /usr/bin/riscv64-linux-gnu-gcc /usr/bin/gcc
         ln -s /usr/bin/riscv64-linux-gnu-g++ /usr/bin/g++
