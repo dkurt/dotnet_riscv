@@ -69,6 +69,8 @@ jobs:
         mkdir -p ${OUTPUTDIR}
         ls /home/runner/work/dotnet_riscv/dotnet_riscv/
         ls ${OUTPUTDIR}
+        touch file.txt
+        cp file.txt ${OUTPUTDIR}
 
     #     cd runtime
     #     git apply ../gen-buildsys.sh.patch
