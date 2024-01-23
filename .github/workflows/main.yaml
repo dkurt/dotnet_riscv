@@ -37,6 +37,7 @@ jobs:
             wget \
             cmake \
             locales \
+            npm \
             build-essential \
             crossbuild-essential-riscv64 \
             zlib1g-dev:riscv64 \
