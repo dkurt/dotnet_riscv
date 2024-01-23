@@ -34,7 +34,7 @@ jobs:
             git \
             wget \
             cmake \
-            locals \
+            locales \
             build-essential \
             crossbuild-essential-riscv64 \
             zlib1g-dev:riscv64 \
