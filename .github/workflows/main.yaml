@@ -19,6 +19,9 @@ jobs:
         - ${{ github.workspace }}/output:${{ github.workspace }}/output
         
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
     - name: Install prerequisities
       run: |
         dpkg --add-architecture riscv64 && \
@@ -61,6 +64,7 @@ jobs:
         mkdir -p ${OUTPUTDIR}
 
         cd runtime
+        git apply ../gen-buildsys.sh.patch
         sed -i 's|j    ThrowExceptionHelper|tail    ThrowExceptionHelper|' src/coreclr/pal/src/arch/riscv64/exceptionhelper.S
         sed -i 's|inline void CodeGen::genJumpToThrowHlpBlk_la|void CodeGen::genJumpToThrowHlpBlk_la|' src/coreclr/jit/codegenriscv64.cpp
         ./build.sh --ci -c Release --cross --arch riscv64 --gcc
