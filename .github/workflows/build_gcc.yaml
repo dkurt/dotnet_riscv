@@ -35,7 +35,6 @@ jobs:
             wget \
             cmake \
             locales \
-            npm \
             build-essential \
             crossbuild-essential-riscv64 \
             zlib1g-dev:riscv64 \
@@ -59,7 +58,7 @@ jobs:
       run: |
         apt-get update
         apt-get autoremove -y nodejs
-        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs npm
 
     - name: Build runtime
       run: |
