@@ -1,0 +1,16 @@
+diff --git a/eng/native/gen-buildsys.sh b/eng/native/gen-buildsys.sh
+index b39448626fb..cfb7d33b6cf 100755
+--- a/eng/native/gen-buildsys.sh
++++ b/eng/native/gen-buildsys.sh
+@@ -27,6 +27,11 @@ if [[ "$compiler" != "default" ]]; then
+     nativescriptroot="$( cd -P "$scriptroot/../common/native" && pwd )"
+     build_arch="$host_arch" compiler="$compiler" . "$nativescriptroot/init-compiler.sh"
+ 
++    if [[ "$host_arch" == "riscv64" ]]; then
++        CC=/usr/bin/riscv64-linux-gnu-gcc-13
++        CXX=/usr/bin/riscv64-linux-gnu-g++-13
++    fi
++
+     CCC_CC="$CC"
+     CCC_CXX="$CXX"
+ fi
