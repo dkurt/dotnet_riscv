@@ -1,16 +1,50 @@
-diff --git a/eng/native/gen-buildsys.sh b/eng/native/gen-buildsys.sh
-index b39448626fb..cfb7d33b6cf 100755
---- a/eng/native/gen-buildsys.sh
-+++ b/eng/native/gen-buildsys.sh
-@@ -27,6 +27,11 @@ if [[ "$compiler" != "default" ]]; then
-     nativescriptroot="$( cd -P "$scriptroot/../common/native" && pwd )"
-     build_arch="$host_arch" compiler="$compiler" . "$nativescriptroot/init-compiler.sh"
- 
-+    if [[ "$host_arch" == "riscv64" ]]; then
-+        CC=/usr/bin/riscv64-linux-gnu-gcc-13
-+        CXX=/usr/bin/riscv64-linux-gnu-g++-13
-+    fi
+diff --git a/eng/common/native/init-compiler.sh b/eng/common/native/init-compiler.sh
+index f5c1ec7ea..4bd905771 100644
+--- a/eng/common/native/init-compiler.sh
++++ b/eng/common/native/init-compiler.sh
+@@ -80,6 +80,11 @@ if [ -z "$CLR_CC" ]; then
+                 fi
+                 CC="$(command -v "$compiler")"
+                 CXX="$(command -v "$cxxCompiler")"
 +
-     CCC_CC="$CC"
-     CCC_CXX="$CXX"
- fi
++                if [ "$build_arch" = "riscv64" ]; then
++                    CC=/usr/bin/riscv64-linux-gnu-gcc-13
++                    CXX=/usr/bin/riscv64-linux-gnu-g++-13
++                fi
+             else
+                 echo "No usable version of $compiler found."
+                 exit 1
+@@ -134,4 +139,9 @@ fi
+ 
+ SCAN_BUILD_COMMAND="$(command -v "scan-build$desired_version")"
+ 
++if [ "$build_arch" = "riscv64" ]; then
++    CC=/usr/bin/riscv64-linux-gnu-gcc-13
++    CXX=/usr/bin/riscv64-linux-gnu-g++-13
++fi
++
+ export CC CXX LDFLAGS SCAN_BUILD_COMMAND
+diff --git a/src/coreclr/jit/codegenriscv64.cpp b/src/coreclr/jit/codegenriscv64.cpp
+index 39d25e316..e59872e12 100644
+--- a/src/coreclr/jit/codegenriscv64.cpp
++++ b/src/coreclr/jit/codegenriscv64.cpp
+@@ -7024,7 +7024,7 @@ void CodeGen::genAllocLclFrame(unsigned frameSize, regNumber initReg, bool* pIni
+     NYI_RISCV64("genAllocLclFrame-----unimplemented/unused on RISCV64 yet----");
+ }
+ 
+-inline void CodeGen::genJumpToThrowHlpBlk_la(
++void CodeGen::genJumpToThrowHlpBlk_la(
+     SpecialCodeKind codeKind, instruction ins, regNumber reg1, BasicBlock* failBlk, regNumber reg2)
+ {
+     assert(INS_beq <= ins && ins <= INS_bgeu);
+diff --git a/src/coreclr/pal/src/arch/riscv64/exceptionhelper.S b/src/coreclr/pal/src/arch/riscv64/exceptionhelper.S
+index 8fc3c1bef..60006fdfa 100644
+--- a/src/coreclr/pal/src/arch/riscv64/exceptionhelper.S
++++ b/src/coreclr/pal/src/arch/riscv64/exceptionhelper.S
+@@ -44,5 +44,5 @@ LEAF_ENTRY ThrowExceptionFromContextInternal, _TEXT
+ 
+     // The PAL_SEHException pointer
+     addi a0, a1, 0
+-    j    ThrowExceptionHelper
++    tail    ThrowExceptionHelper
+ LEAF_END ThrowExceptionFromContextInternal, _TEXT
