@@ -1,6 +1,6 @@
 name: Build .NET SDK
 
-on: [workflow_dispatch, pull_request]
+on: [workflow_dispatch]
 
 jobs:
   run:
@@ -17,7 +17,7 @@ jobs:
         ROOTFS_DIR: /crossrootfs/riscv64
       volumes:
         - ${{ github.workspace }}/output:${{ github.workspace }}/output
-        
+
     steps:
     - name: Clone repositories
       run: |
