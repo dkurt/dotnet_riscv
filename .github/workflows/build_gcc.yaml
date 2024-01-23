@@ -58,7 +58,8 @@ jobs:
       run: |
         apt-get update
         apt-get autoremove -y nodejs
-        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs npm
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
+        apt-get install -y npm
 
     - name: Build runtime
       run: |
