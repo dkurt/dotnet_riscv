@@ -16,14 +16,14 @@ jobs:
         ASPNETCORE_VERSION: 8.0.1-servicing.23580.8
         ROOTFS_DIR: /
       volumes:
-        - ${{ github.workspace }}/output:${{ github.workspace }}/output
-        
+        - ${{ github.workspace }}:${{ github.workspace }}
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
       with:
         clean: false
-    
+
     - name: Install prerequisities
       run: |
         dpkg --add-architecture riscv64 && \
@@ -48,7 +48,7 @@ jobs:
             liblttng-ust-dev
 
         locale-gen en_US.UTF-8
-    
+
     - name: Clone repositories
       run: |
         git clone --depth 1 -b v8.0.1 https://github.com/dotnet/runtime
