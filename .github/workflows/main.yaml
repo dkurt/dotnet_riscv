@@ -34,15 +34,13 @@ jobs:
             git \
             wget \
             cmake \
+            build-essential \
             crossbuild-essential-riscv64 \
             zlib1g-dev:riscv64 \
             libkrb5-dev:riscv64 \
             libssl-dev:riscv64 \
             libicu-dev:riscv64 \
             liblttng-ust-dev:riscv64
-
-        ln -s /usr/bin/riscv64-linux-gnu-gcc /usr/bin/gcc
-        ln -s /usr/bin/riscv64-linux-gnu-g++ /usr/bin/g++
     
     - name: Clone repositories
       run: |
