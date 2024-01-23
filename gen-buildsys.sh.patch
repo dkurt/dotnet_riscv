@@ -8,8 +8,8 @@ index f5c1ec7ea..4bd905771 100644
                  CXX="$(command -v "$cxxCompiler")"
 +
 +                if [ "$build_arch" = "riscv64" ]; then
-+                    CC=/usr/bin/riscv64-linux-gnu-gcc
-+                    CXX=/usr/bin/riscv64-linux-gnu-g++
++                    CC=/usr/bin/riscv64-linux-gnu-gcc-13
++                    CXX=/usr/bin/riscv64-linux-gnu-g++-13
 +                fi
              else
                  echo "No usable version of $compiler found."
@@ -19,8 +19,8 @@ index f5c1ec7ea..4bd905771 100644
  SCAN_BUILD_COMMAND="$(command -v "scan-build$desired_version")"
  
 +if [ "$build_arch" = "riscv64" ]; then
-+    CC=/usr/bin/riscv64-linux-gnu-gcc
-+    CXX=/usr/bin/riscv64-linux-gnu-g++
++    CC=/usr/bin/riscv64-linux-gnu-gcc-13
++    CXX=/usr/bin/riscv64-linux-gnu-g++-13
 +fi
 +
  export CC CXX LDFLAGS SCAN_BUILD_COMMAND
