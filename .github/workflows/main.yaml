@@ -20,10 +20,10 @@ jobs:
     
     - name: Install prerequisities
       run: |
-        sudo dpkg --add-architecture riscv64 && \
-        sudo sed -i -E 's|^deb ([^ ]+) (.*)$|deb [arch=amd64] \1 \2\ndeb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports/ \2|' /etc/apt/sources.list && \
-        sudo apt-get update && \
-        sudo apt-get install -y --no-install-recommends \
+        dpkg --add-architecture riscv64 && \
+        sed -i -E 's|^deb ([^ ]+) (.*)$|deb [arch=amd64] \1 \2\ndeb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports/ \2|' /etc/apt/sources.list && \
+        apt-get update && \
+        apt-get install -y --no-install-recommends \
             ca-certificates \
             python3-minimal \
             python3-libxml2 \
@@ -41,7 +41,7 @@ jobs:
             zlib1g-dev \
             liblttng-ust-dev
 
-        sudo locale-gen en_US.UTF-8
+        locale-gen en_US.UTF-8
     
     - name: Clone repositories
       run: |
@@ -52,9 +52,9 @@ jobs:
 
     - name: Update Node.js
       run: |
-        sudo apt-get update
-        sudo apt-get autoremove -y nodejs
-        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && sudo apt-get install -y nodejs
+        apt-get update
+        apt-get autoremove -y nodejs
+        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
 
     - name: Build runtime
       run: |
