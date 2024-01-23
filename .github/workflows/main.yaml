@@ -62,6 +62,7 @@ jobs:
 
         cd runtime
         sed -i 's|j    ThrowExceptionHelper|tail    ThrowExceptionHelper|' src/coreclr/pal/src/arch/riscv64/exceptionhelper.S
+        sed -i 's|inline void CodeGen::genJumpToThrowHlpBlk_la|void CodeGen::genJumpToThrowHlpBlk_la|' src/coreclr/jit/codegenriscv64.cpp
         ./build.sh --ci -c Release --cross --arch riscv64 --gcc
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
