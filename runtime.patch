@@ -1,0 +1,50 @@
+diff --git a/eng/common/native/init-compiler.sh b/eng/common/native/init-compiler.sh
+index f5c1ec7eafe..eec49743cdb 100644
+--- a/eng/common/native/init-compiler.sh
++++ b/eng/common/native/init-compiler.sh
+@@ -134,4 +134,9 @@ fi
+
+ SCAN_BUILD_COMMAND="$(command -v "scan-build$desired_version")"
+
++if [ "$build_arch" = "riscv64" ]; then
++    CC=/usr/bin/riscv64-linux-gnu-gcc
++    CXX=/usr/bin/riscv64-linux-gnu-g++
++fi
++
+ export CC CXX LDFLAGS SCAN_BUILD_COMMAND
+diff --git a/src/coreclr/jit/codegenriscv64.cpp b/src/coreclr/jit/codegenriscv64.cpp
+index 39d25e316e5..e59872e1269 100644
+--- a/src/coreclr/jit/codegenriscv64.cpp
++++ b/src/coreclr/jit/codegenriscv64.cpp
+@@ -7024,7 +7024,7 @@ void CodeGen::genAllocLclFrame(unsigned frameSize, regNumber initReg, bool* pIni
+     NYI_RISCV64("genAllocLclFrame-----unimplemented/unused on RISCV64 yet----");
+ }
+
+-inline void CodeGen::genJumpToThrowHlpBlk_la(
++void CodeGen::genJumpToThrowHlpBlk_la(
+     SpecialCodeKind codeKind, instruction ins, regNumber reg1, BasicBlock* failBlk, regNumber reg2)
+ {
+     assert(INS_beq <= ins && ins <= INS_bgeu);
+diff --git a/src/coreclr/pal/src/arch/riscv64/exceptionhelper.S b/src/coreclr/pal/src/arch/riscv64/exceptionhelper.S
+index 8fc3c1bef3c..60006fdfa28 100644
+--- a/src/coreclr/pal/src/arch/riscv64/exceptionhelper.S
++++ b/src/coreclr/pal/src/arch/riscv64/exceptionhelper.S
+@@ -44,5 +44,5 @@ LEAF_ENTRY ThrowExceptionFromContextInternal, _TEXT
+
+     // The PAL_SEHException pointer
+     addi a0, a1, 0
+-    j    ThrowExceptionHelper
++    tail    ThrowExceptionHelper
+ LEAF_END ThrowExceptionFromContextInternal, _TEXT
+diff --git a/src/native/libs/CMakeLists.txt b/src/native/libs/CMakeLists.txt
+index b8ec2cf654c..0bca9904bc8 100644
+--- a/src/native/libs/CMakeLists.txt
++++ b/src/native/libs/CMakeLists.txt
+@@ -119,6 +119,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
+         add_subdirectory(System.IO.Ports.Native)
+     endif ()
+
++    add_compile_options(-Wno-alloc-size-larger-than)
+     if (CMAKE_C_COMPILER_ID STREQUAL Clang)
+         add_compile_options(-Weverything)
+         add_compile_options(-Wno-format-nonliteral)

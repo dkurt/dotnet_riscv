@@ -1,24 +1,49 @@
-name: Build .NET SDK
+name: Build .NET SDK (GCC)
 
 on: [workflow_dispatch]
 
 jobs:
   run:
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-riscv64
-      env:
-        PACKAGESDIR: ${{ github.workspace }}/packages
-        DOWNLOADDIR: ${{ github.workspace }}/downloads
-        OUTPUTDIR: ${{ github.workspace }}/output
-        RUNTIME_VERSION: 8.0.1-servicing.23580.1
-        SDK_VERSION: 8.0.101-servicing.23580.21
-        ASPNETCORE_VERSION: 8.0.1-servicing.23580.8
-        ROOTFS_DIR: /crossrootfs/riscv64
-      volumes:
-        - ${{ github.workspace }}/output:${{ github.workspace }}/output
+    runs-on: ubuntu-22.04
+    env:
+      PACKAGESDIR: ${{ github.workspace }}/packages
+      DOWNLOADDIR: ${{ github.workspace }}/downloads
+      OUTPUTDIR: ${{ github.workspace }}/output
+      RUNTIME_VERSION: 8.0.1-servicing.23580.1
+      SDK_VERSION: 8.0.101-servicing.23580.21
+      ASPNETCORE_VERSION: 8.0.1-servicing.23580.8
+      ROOTFS_DIR: /
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install prerequisities
+      run: |
+        sudo dpkg --add-architecture riscv64 && \
+        sudo sed -i -E 's|^deb ([^ ]+) (.*)$|deb [arch=amd64] \1 \2\ndeb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports/ \2|' /etc/apt/sources.list && \
+        sudo apt-get update && \
+        sudo apt-get install -y --no-install-recommends \
+            ca-certificates \
+            python3-minimal \
+            python3-libxml2 \
+            git \
+            wget \
+            curl \
+            cmake \
+            locales \
+            build-essential \
+            crossbuild-essential-riscv64 \
+            zlib1g-dev:riscv64 \
+            libkrb5-dev:riscv64 \
+            libssl-dev:riscv64 \
+            libicu-dev:riscv64 \
+            liblttng-ust-dev:riscv64 \
+            zlib1g-dev \
+            liblttng-ust-dev
+
+        sudo locale-gen en_US.UTF-8
+
     - name: Clone repositories
       run: |
         git clone --depth 1 -b v8.0.1 https://github.com/dotnet/runtime
@@ -28,9 +53,9 @@ jobs:
 
     - name: Update Node.js
       run: |
-        apt-get update
-        apt-get autoremove -y nodejs
-        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
+        sudo apt-get update
+        sudo apt-get autoremove -y nodejs
+        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo bash - && sudo apt-get install -y nodejs
 
     - name: Build runtime
       run: |
@@ -39,7 +64,8 @@ jobs:
         mkdir -p ${OUTPUTDIR}
 
         cd runtime
-        ./build.sh --ci -c Release --cross --arch riscv64
+        git apply ../runtime.patch
+        ./build.sh --ci -c Release --cross --arch riscv64 --gcc
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
