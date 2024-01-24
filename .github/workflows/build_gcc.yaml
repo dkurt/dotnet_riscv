@@ -4,19 +4,15 @@ on: [workflow_dispatch, pull_request]
 
 jobs:
   run:
-    runs-on: ubuntu-latest
-    container:
-      image: ubuntu:22.04
-      env:
-        PACKAGESDIR: ${{ github.workspace }}/packages
-        DOWNLOADDIR: ${{ github.workspace }}/downloads
-        OUTPUTDIR: ${{ github.workspace }}/output
-        RUNTIME_VERSION: 8.0.1-servicing.23580.1
-        SDK_VERSION: 8.0.101-servicing.23580.21
-        ASPNETCORE_VERSION: 8.0.1-servicing.23580.8
-        ROOTFS_DIR: /
-      volumes:
-        - ${{ github.workspace }}:${{ github.workspace }}
+    runs-on: ubuntu-22.04
+    env:
+      PACKAGESDIR: ${{ github.workspace }}/packages
+      DOWNLOADDIR: ${{ github.workspace }}/downloads
+      OUTPUTDIR: ${{ github.workspace }}/output
+      RUNTIME_VERSION: 8.0.1-servicing.23580.1
+      SDK_VERSION: 8.0.101-servicing.23580.21
+      ASPNETCORE_VERSION: 8.0.1-servicing.23580.8
+      ROOTFS_DIR: /
 
     steps:
     - name: Checkout
@@ -24,10 +20,10 @@ jobs:
 
     - name: Install prerequisities
       run: |
-        dpkg --add-architecture riscv64 && \
-        sed -i -E 's|^deb ([^ ]+) (.*)$|deb [arch=amd64] \1 \2\ndeb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports/ \2|' /etc/apt/sources.list && \
-        apt-get update && \
-        apt-get install -y --no-install-recommends \
+        sudo dpkg --add-architecture riscv64 && \
+        sudo sed -i -E 's|^deb ([^ ]+) (.*)$|deb [arch=amd64] \1 \2\ndeb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports/ \2|' /etc/apt/sources.list && \
+        sudo apt-get update && \
+        sudo apt-get install -y --no-install-recommends \
             ca-certificates \
             python3-minimal \
             python3-libxml2 \
@@ -46,7 +42,7 @@ jobs:
             zlib1g-dev \
             liblttng-ust-dev
 
-        locale-gen en_US.UTF-8
+        sudo locale-gen en_US.UTF-8
 
     - name: Clone repositories
       run: |
@@ -57,9 +53,9 @@ jobs:
 
     - name: Update Node.js
       run: |
-        apt-get update
-        apt-get autoremove -y nodejs
-        curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
+        sudo apt-get update
+        sudo apt-get autoremove -y nodejs
+        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo bash - && sudo apt-get install -y nodejs
 
     - name: Build runtime
       run: |
