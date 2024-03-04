@@ -25,10 +25,10 @@ jobs:
     steps:
     - name: Clone repositories
       run: |
-        git clone https://github.com/dotnet/runtime
-        git clone https://github.com/dotnet/aspnetcore
-        git clone https://github.com/dotnet/sdk
-        git clone https://github.com/dotnet/installer
+        git clone --depth 1 https://github.com/dotnet/runtime
+        git clone --depth 1 https://github.com/dotnet/aspnetcore
+        git clone --depth 1 https://github.com/dotnet/sdk
+        git clone --depth 1 https://github.com/dotnet/installer
 
     - name: Update Node.js
       run: |
