@@ -15,7 +15,7 @@ jobs:
         SDK_VERSION: 9.0.100-alpha.1.24062.7
         ASPNETCORE_VERSION: 9.0.0-alpha.1.24061.8
         ROOTFS_DIR: /crossrootfs/riscv64
-        RUNTIME_REVISION: release/9.0-preview1
+        RUNTIME_REVISION: main
         SDK_REVISION: release/9.0-preview1
         ASPNETCORE_REVISION: release/9.0-preview1
         INSTALLER_REVISION: release/9.0-preview1
