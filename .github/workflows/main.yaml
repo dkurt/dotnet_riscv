@@ -51,7 +51,7 @@ jobs:
 
         cd runtime && git checkout ${RUNTIME_REVISION}
         sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
-        ./build.sh -s clr+libs+packs+packs.installers+tools --ci -c Release --cross --arch riscv64 /p:Version=${RUNTIME_VERSION}
+        ./build.sh -s host+clr+libs+packs+packs.installers+tools --ci -c Release --cross --arch riscv64 /p:Version=${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
