@@ -13,7 +13,7 @@ jobs:
         OUTPUTDIR: ${{ github.workspace }}/output
         RUNTIME_VERSION: v9.0.0
         SDK_VERSION: v9.0.0
-        ASPNETCORE_VERSION: 9.0.0
+        ASPNETCORE_VERSION: v9.0.0
         ROOTFS_DIR: /crossrootfs/riscv64
       volumes:
         - ${{ github.workspace }}:${{ github.workspace }}
