@@ -11,9 +11,9 @@ jobs:
         PACKAGESDIR: ${{ github.workspace }}/packages
         DOWNLOADDIR: ${{ github.workspace }}/downloads
         OUTPUTDIR: ${{ github.workspace }}/output
-        RUNTIME_VERSION: v9.0.0
-        SDK_VERSION: v9.0.100
-        ASPNETCORE_VERSION: v9.0.0
+        RUNTIME_VERSION: 9.0.0
+        SDK_VERSION: 9.0.100
+        ASPNETCORE_VERSION: 9.0.0
         ROOTFS_DIR: /crossrootfs/riscv64
       volumes:
         - ${{ github.workspace }}:${{ github.workspace }}
@@ -21,9 +21,9 @@ jobs:
     steps:
     - name: Clone repositories
       run: |
-        git clone --depth 1 -b ${RUNTIME_VERSION} https://github.com/dotnet/runtime
-        git clone --depth 1 -b ${ASPNETCORE_VERSION} https://github.com/dotnet/aspnetcore --recurse-submodules
-        git clone --depth 1 -b ${SDK_VERSION} https://github.com/dotnet/sdk
+        git clone --depth 1 -b "v${RUNTIME_VERSION}" https://github.com/dotnet/runtime
+        git clone --depth 1 -b "v${ASPNETCORE_VERSION}" https://github.com/dotnet/aspnetcore --recurse-submodules
+        git clone --depth 1 -b "v${SDK_VERSION}" https://github.com/dotnet/sdk
 
     # - name: Update Node.js
     #   run: |
