@@ -37,7 +37,7 @@ jobs:
         mkdir -p ${DOWNLOADDIR}
         mkdir -p ${OUTPUTDIR}
 
-        cd runtime && git checkout ${RUNTIME_REVISION}
+        cd runtime
         sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
         ./build.sh -c Release --cross --arch riscv64 /p:Version=${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
@@ -54,7 +54,7 @@ jobs:
 
     - name: Build SDK
       run: |
-        cd sdk && git checkout ${SDK_REVISION}
+        cd sdk
         ./build.sh --pack --ci -c Release /p:Architecture=riscv64 /p:Version=${SDK_VERSION}
         mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
         cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
@@ -63,7 +63,7 @@ jobs:
 
     - name: Build aspnetcore
       run: |
-        cd aspnetcore && git checkout ${ASPNETCORE_REVISION}
+        cd aspnetcore
         git submodule init
         git submodule update --recursive
         sed -i "s|ppc64le|riscv64|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
