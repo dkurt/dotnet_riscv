@@ -55,7 +55,7 @@ jobs:
     - name: Build SDK
       run: |
         cd sdk
-        ./build.sh --pack --ci -c Release /p:Architecture=riscv64 /p:Version=${SDK_VERSION}
+        ./build.sh --pack --ci -c Release /p:Architecture=riscv64 /p:Version=${SDK_VERSION} /p:PublicBaseURL=file://${DOWNLOADDIR}/
         mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
         cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
         cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Common.*.nupkg ${PACKAGESDIR}
