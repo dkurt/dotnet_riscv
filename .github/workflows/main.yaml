@@ -35,7 +35,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: dotnet/sdk
-        ref: "v${SDK_VERSION}"
+        ref: v9.0.100
 
     - name: Update Node.js
       run: |
