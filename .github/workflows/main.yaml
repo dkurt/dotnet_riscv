@@ -21,12 +21,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        repository: https://github.com/dotnet/runtime
+        repository: dotnet/runtime
         ref: v9.0.0
 
     - uses: actions/checkout@v4
       with:
-        repository: https://github.com/dotnet/aspnetcore
+        repository: dotnet/aspnetcore
         ref: 401ae7cb55f1460e038f7f8be0e8c782bfeec1ef
 
     # - name: Clone repositories
