@@ -19,23 +19,11 @@ jobs:
         - ${{ github.workspace }}:${{ github.workspace }}
 
     steps:
-    - name: Clone runtime
-      uses: actions/checkout@v4
-      with:
-        repository: dotnet/runtime
-        ref: v9.0.0
-
-    - name: Clone AspNetCore
-      uses: actions/checkout@v4
-      with:
-        repository: dotnet/aspnetcore
-        ref: 401ae7cb55f1460e038f7f8be0e8c782bfeec1ef
-
-    - name: Clone SDK
-      uses: actions/checkout@v4
-      with:
-        repository: dotnet/sdk
-        ref: v9.0.100
+    - name: Clone repositories
+      run: |
+        git clone --depth 1 -b v9.0.0 https://github.com/dotnet/runtime
+        git clone --depth 1 -b release/9.0 https://github.com/dotnet/aspnetcore --recurse-submodules
+        git clone --depth 1 -b v9.0.100 https://github.com/dotnet/sdk
 
     - name: Update Node.js
       run: |
@@ -67,8 +55,6 @@ jobs:
     - name: Build aspnetcore
       run: |
         cd aspnetcore
-        git submodule init
-        git submodule update --recursive
         sed -i "s|ppc64le|riscv64|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
         sed -i "s|\$(BaseIntermediateOutputPath)\$(DotNetRuntimeArchiveFileName)|${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-9.0.0-linux-riscv64.tar.gz|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
         ./eng/build.sh --pack --ci -c Release -arch riscv64
