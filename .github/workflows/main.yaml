@@ -21,6 +21,7 @@ jobs:
     steps:
     - name: Clone repositories
       run: |
+        rm -rf runtime aspnetcore sdk
         git clone --depth 1 -b v9.0.0 https://github.com/dotnet/runtime
         git clone --depth 1 -b release/9.0 https://github.com/dotnet/aspnetcore --recurse-submodules
         git clone --depth 1 -b v9.0.100 https://github.com/dotnet/sdk
