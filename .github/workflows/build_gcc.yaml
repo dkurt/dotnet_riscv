@@ -4,7 +4,7 @@ on: [workflow_dispatch, pull_request]
 
 jobs:
   run:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       PACKAGESDIR: ${{ github.workspace }}/packages
       DOWNLOADDIR: ${{ github.workspace }}/downloads
@@ -15,6 +15,12 @@ jobs:
       ROOTFS_DIR: /
 
     steps:
+    - name: Update Node.js
+      run: |
+        sudo apt-get update
+        sudo apt-get autoremove -y nodejs
+        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo bash - && sudo apt-get install -y nodejs
+
     - name: Install prerequisities
       run: |
         sudo dpkg --add-architecture riscv64 && \
@@ -46,12 +52,6 @@ jobs:
         git clone --depth 1 -b v9.0.0 https://github.com/dotnet/runtime
         git clone --depth 1 -b release/9.0 https://github.com/dotnet/aspnetcore --recurse-submodules
         git clone --depth 1 -b v9.0.100 https://github.com/dotnet/sdk
-
-    - name: Update Node.js
-      run: |
-        sudo apt-get update
-        sudo apt-get autoremove -y nodejs
-        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo bash - && sudo apt-get install -y nodejs
 
     - name: Build runtime
       run: |
