@@ -1,6 +1,6 @@
 name: Build .NET SDK (GCC)
 
-on: [workflow_dispatch, pull_request]
+on: [workflow_dispatch]
 
 jobs:
   build_with_gcc:
@@ -135,5 +135,5 @@ jobs:
     - name: Upload .NET
       uses: actions/upload-artifact@v4
       with:
-        name: dotnet-sdk-linux-riscv64
+        name: "dotnet-sdk-linux-riscv64-gcc-${{ matrix.os }}"
         path: "${{ github.workspace }}/output/*"
