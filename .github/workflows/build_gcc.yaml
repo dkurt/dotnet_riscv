@@ -34,6 +34,38 @@ jobs:
 
         sudo locale-gen en_US.UTF-8
 
+    - name: Install cross-build libraries
+      run: |
+        echo "Types: deb"| sudo tee /etc/apt/sources.list.d/ubuntu.sources
+        echo "URIs: http://archive.ubuntu.com/ubuntu/" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Suites: noble noble-updates noble-backports" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Components: main universe restricted multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Architectures: amd64" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+
+        echo "Types: deb" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "URIs: http://security.ubuntu.com/ubuntu/" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Suites: noble-security" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Components: main universe restricted multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Architectures: amd64" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+
+        echo "Types: deb" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "URIs: http://ports.ubuntu.com/ubuntu-ports/" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Suites: noble noble-updates noble-backports" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Components: main universe restricted multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        echo "Architectures: riscv64" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+
+        sudo dpkg --add-architecture riscv64
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+            zlib1g-dev:riscv64 \
+            libkrb5-dev:riscv64 \
+            libssl-dev:riscv64 \
+            libicu-dev:riscv64 \
+            liblttng-ust-dev:riscv64
+
     - name: Clone repositories
       run: |
         git clone --depth 1 -b v9.0.0 https://github.com/dotnet/runtime
