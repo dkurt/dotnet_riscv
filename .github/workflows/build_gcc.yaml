@@ -15,16 +15,8 @@ jobs:
       ROOTFS_DIR: /
 
     steps:
-    - name: Update Node.js
-      run: |
-        sudo apt-get update
-        sudo apt-get autoremove -y nodejs
-        curl -fsSL https://deb.nodesource.com/setup_18.x | sudo bash - && sudo apt-get install -y nodejs
-
     - name: Install prerequisities
       run: |
-        sudo dpkg --add-architecture riscv64 && \
-        sudo sed -i -E 's|^deb ([^ ]+) (.*)$|deb [arch=amd64] \1 \2\ndeb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports/ \2|' /etc/apt/sources.list && \
         sudo apt-get update && \
         sudo apt-get install -y --no-install-recommends \
             ca-certificates \
@@ -37,11 +29,6 @@ jobs:
             locales \
             build-essential \
             crossbuild-essential-riscv64 \
-            zlib1g-dev:riscv64 \
-            libkrb5-dev:riscv64 \
-            libssl-dev:riscv64 \
-            libicu-dev:riscv64 \
-            liblttng-ust-dev:riscv64 \
             zlib1g-dev \
             liblttng-ust-dev
 
