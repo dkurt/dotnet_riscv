@@ -3,8 +3,11 @@ name: Build .NET SDK (GCC)
 on: [workflow_dispatch, pull_request]
 
 jobs:
-  run:
-    runs-on: ubuntu-24.04
+  build_with_gcc:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
     env:
       PACKAGESDIR: ${{ github.workspace }}/packages
       DOWNLOADDIR: ${{ github.workspace }}/downloads
@@ -20,31 +23,35 @@ jobs:
 
     - name: Install prerequisities
       run: |
-        echo "Types: deb" | sudo tee /etc/apt/sources.list.d/ubuntu.sources
-        echo "URIs: http://ports.ubuntu.com/ubuntu-ports/" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Suites: noble noble-updates noble-backports" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Components: main universe restricted multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Architectures: riscv64" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        if [ ${{ matrix.os }} == 'ubuntu-22.04' ]; then
+          sudo sed -i -E 's|^deb ([^ ]+) (.*)$|deb [arch=amd64] \1 \2\ndeb [arch=riscv64] http://ports.ubuntu.com/ubuntu-ports/ \2|' /etc/apt/sources.list
+        else
+          echo "Types: deb" | sudo tee /etc/apt/sources.list.d/ubuntu.sources
+          echo "URIs: http://ports.ubuntu.com/ubuntu-ports/" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Suites: noble noble-updates noble-backports" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Components: main universe restricted multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Architectures: riscv64" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
 
-        echo "Types: deb" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "URIs: http://archive.ubuntu.com/ubuntu/" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Suites: noble noble-updates noble-backports" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Components: main universe restricted multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Architectures: amd64" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Types: deb" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "URIs: http://archive.ubuntu.com/ubuntu/" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Suites: noble noble-updates noble-backports" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Components: main universe restricted multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Architectures: amd64" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
 
-        echo "Types: deb" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "URIs: http://security.ubuntu.com/ubuntu/" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Suites: noble-security" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Components: main universe restricted multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
-        echo "Architectures: amd64" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Types: deb" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "URIs: http://security.ubuntu.com/ubuntu/" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Suites: noble-security" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Components: main universe restricted multiverse" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+          echo "Architectures: amd64" | sudo tee -a /etc/apt/sources.list.d/ubuntu.sources
+        fi
 
-        sudo dpkg --add-architecture riscv64
-        sudo apt-get update
+        sudo dpkg --add-architecture riscv64 && \
+        sudo apt-get update && \
         sudo apt-get install -y --no-install-recommends \
             ca-certificates \
             python3-minimal \
@@ -103,7 +110,8 @@ jobs:
 
         cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
-        cp artifacts/installers/Release/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-9.0.0-linux-riscv64.tar.gz        cp artifacts/installers/Release/aspnetcore_base_runtime.version ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
+        cp artifacts/installers/Release/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-9.0.0-linux-riscv64.tar.gz
+        cp artifacts/installers/Release/aspnetcore_base_runtime.version ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
         cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Web.*.nupkg ${PACKAGESDIR}
         cd .. && rm -r aspnetcore

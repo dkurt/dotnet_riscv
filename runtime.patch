@@ -12,3 +12,15 @@ index 9a0e1f2b4..68d1ece3c 100644
 +fi
 +
  export CC CXX LDFLAGS SCAN_BUILD_COMMAND
+diff --git a/src/native/libs/CMakeLists.txt b/src/native/libs/CMakeLists.txt
+index 23bdf3c26..f8302435a 100644
+--- a/src/native/libs/CMakeLists.txt
++++ b/src/native/libs/CMakeLists.txt
+@@ -115,6 +115,7 @@ if (CLR_CMAKE_TARGET_UNIX OR CLR_CMAKE_TARGET_BROWSER OR CLR_CMAKE_TARGET_WASI)
+         add_subdirectory(System.IO.Ports.Native)
+     endif ()
+
++    add_compile_options(-Wno-alloc-size-larger-than)
+     if (CMAKE_C_COMPILER_ID MATCHES "Clang")
+         add_compile_options(-Weverything)
+         add_compile_options(-Wno-format-nonliteral)
