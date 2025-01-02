@@ -4,27 +4,27 @@ on: [workflow_dispatch]
 
 jobs:
   run:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     container:
       image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-riscv64
       env:
         PACKAGESDIR: ${{ github.workspace }}/packages
         DOWNLOADDIR: ${{ github.workspace }}/downloads
         OUTPUTDIR: ${{ github.workspace }}/output
-        RUNTIME_VERSION: 8.0.1-servicing.23580.1
-        SDK_VERSION: 8.0.101-servicing.23580.21
-        ASPNETCORE_VERSION: 8.0.1-servicing.23580.8
+        RUNTIME_VERSION: 9.0.0-rtm.24528.9
+        SDK_VERSION: 9.0.100
+        ASPNETCORE_VERSION: 9.0.0-rtm.24529.3
         ROOTFS_DIR: /crossrootfs/riscv64
       volumes:
-        - ${{ github.workspace }}/output:${{ github.workspace }}/output
+        - ${{ github.workspace }}:${{ github.workspace }}
 
     steps:
     - name: Clone repositories
       run: |
-        git clone --depth 1 -b v8.0.1 https://github.com/dotnet/runtime
-        git clone --depth 1 -b v8.0.1 https://github.com/dotnet/aspnetcore --recurse-submodules
-        git clone --depth 1 -b v8.0.101 https://github.com/dotnet/sdk
-        git clone --depth 1 -b v8.0.101 https://github.com/dotnet/installer
+        rm -rf runtime aspnetcore sdk
+        git clone --depth 1 -b v9.0.0 https://github.com/dotnet/runtime
+        git clone --depth 1 -b release/9.0 https://github.com/dotnet/aspnetcore --recurse-submodules
+        git clone --depth 1 -b v9.0.100 https://github.com/dotnet/sdk
 
     - name: Update Node.js
       run: |
@@ -39,6 +39,7 @@ jobs:
         mkdir -p ${OUTPUTDIR}
 
         cd runtime
+        sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
         ./build.sh --ci -c Release --cross --arch riscv64
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
@@ -47,49 +48,42 @@ jobs:
         cp artifacts/packages/Release/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHost.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostPolicy.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetHostResolver.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/NonShipping/runtime.linux-riscv64.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/NonShipping/runtime.linux-riscv64.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetAppHost.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
         cd .. && rm -r runtime
-
-    - name: Build SDK
-      run: |
-        cd sdk
-        ./build.sh --pack --ci -c Release /p:Architecture=riscv64
-        mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
-        cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
-        cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Common.*.nupkg ${PACKAGESDIR}
-        cd .. && rm -r sdk
 
     - name: Build aspnetcore
       run: |
         cd aspnetcore
         sed -i "s|ppc64le|riscv64|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
-        sed -i "s|\$(BaseIntermediateOutputPath)\$(DotNetRuntimeArchiveFileName)|${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-8.0.1-linux-riscv64.tar.gz|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
-        ./eng/build.sh --pack --ci -c Release -arch riscv64 /p:DotNetAssetRootUrl=file://${DOWNLOADDIR}/
+        sed -i "s|\$(BaseIntermediateOutputPath)\$(DotNetRuntimeArchiveFileName)|${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-9.0.0-linux-riscv64.tar.gz|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
+        ./eng/build.sh --pack --ci -c Release -arch riscv64
 
         cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
-        cp artifacts/installers/Release/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
+        cp artifacts/installers/Release/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-9.0.0-linux-riscv64.tar.gz
         cp artifacts/installers/Release/aspnetcore_base_runtime.version ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
         cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Web.*.nupkg ${PACKAGESDIR}
         cd .. && rm -r aspnetcore
 
-    - name: Build installer
+    - name: Build SDK
       run: |
-        cd installer
-        sed -i "s|linux-arm64|linux-riscv64|" src/redist/targets/GenerateBundledVersions.targets
+        cd sdk
+        sed -i "s|linux-arm64|linux-riscv64|" src/Installer/redist-installer/targets/GenerateBundledVersions.targets
         sed -i "s|linux-arm64|linux-riscv64|" src/SourceBuild/content/eng/bootstrap/buildBootstrapPreviouslySB.csproj
         sed -i s'|ppc64le|riscv64|' Directory.Build.props
         sed -i s'|ppc64le|riscv64|' src/SourceBuild/content/Directory.Build.props
-        sed -i s'|ppc64le|riscv64|' src/redist/targets/Crossgen.targets
+        sed -i s'|ppc64le|riscv64|' src/Installer/redist-installer/targets/Crossgen.targets
         sed -i s"|<clear />|<clear />\n<add key='local' value='${PACKAGESDIR}' />|" NuGet.config
-        ./build.sh --ci -c Release -a riscv64 /p:HostRid=linux-x64 /p:PublicBaseURL=file://${DOWNLOADDIR}/
+        ./build.sh --pack --ci -c Release --warnAsError false /p:Architecture=riscv64 /p:Version=${SDK_VERSION} /p:PublicBaseURL=file://${DOWNLOADDIR}/
+        mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
+        cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
+        cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Common.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz.sha512 ${OUTPUTDIR}
+        cd .. && rm -r sdk
 
     - name: Upload .NET
       uses: actions/upload-artifact@v4
