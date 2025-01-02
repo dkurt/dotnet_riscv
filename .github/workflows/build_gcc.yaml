@@ -15,6 +15,9 @@ jobs:
       ROOTFS_DIR: /
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Install prerequisities
       run: |
         echo "Types: deb" | sudo tee /etc/apt/sources.list.d/ubuntu.sources
@@ -58,7 +61,6 @@ jobs:
             libssl-dev:riscv64 \
             libicu-dev:riscv64 \
             liblttng-ust-dev:riscv64 \
-            libunwind-dev:riscv64 \
             zlib1g-dev \
             liblttng-ust-dev
 
@@ -77,8 +79,9 @@ jobs:
         mkdir -p ${OUTPUTDIR}
 
         cd runtime
+        git apply ../runtime.patch
         sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
-        CLR_CC=/usr/bin/riscv64-linux-gnu-gcc CLR_CXX=/usr/bin/riscv64-linux-gnu-g++ ./build.sh --ci -c Release --cross --arch riscv64 --gcc
+        ./build.sh --ci -c Release --cross --arch riscv64 --gcc
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
