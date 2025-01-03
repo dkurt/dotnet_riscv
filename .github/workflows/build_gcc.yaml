@@ -1,6 +1,6 @@
 name: Build .NET SDK (GCC)
 
-on: [workflow_dispatch]
+on: [workflow_dispatch, pull_request]
 
 jobs:
   build_with_gcc:
@@ -93,7 +93,6 @@ jobs:
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
-        cp artifacts/packages/Release/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetAppHost.*.nupkg ${OUTPUTDIR}
@@ -129,11 +128,19 @@ jobs:
         mkdir -p ${DOWNLOADDIR}/Sdk/${SDK_VERSION}
         cp artifacts/packages/Release/NonShipping/dotnet-toolset-internal-*.zip ${DOWNLOADDIR}/Sdk/${SDK_VERSION}/dotnet-toolset-internal-${SDK_VERSION}.zip
         cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Common.*.nupkg ${PACKAGESDIR}
-        cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz.sha512 ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz ${OUTPUTDIR}/dotnet-sdk-${SDK_VERSION}-linux-riscv64-gcc-${{ matrix.os }}.tar.gz
+        cp artifacts/packages/Release/Shipping/dotnet-sdk-*-linux-riscv64.tar.gz.sha512 ${OUTPUTDIR}/dotnet-sdk-${SDK_VERSION}-linux-riscv64-gcc-${{ matrix.os }}.tar.gz.sha512
 
     - name: Upload .NET
       uses: actions/upload-artifact@v4
+      if: startsWith(github.ref, 'refs/tags/') != true
       with:
         name: "dotnet-sdk-linux-riscv64-gcc-${{ matrix.os }}"
         path: "${{ github.workspace }}/output/*"
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          ${{ github.workspace }}/output/dotnet-sdk-*.tar.gz*
