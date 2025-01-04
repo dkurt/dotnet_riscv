@@ -34,9 +34,9 @@ jobs:
 
     - name: Build runtime
       run: |
-        mkdir -p ${PACKAGESDIR}
-        mkdir -p ${DOWNLOADDIR}
-        mkdir -p ${OUTPUTDIR}
+        rm -rf ${PACKAGESDIR} && mkdir -p ${PACKAGESDIR}
+        rm -rf ${DOWNLOADDIR} && mkdir -p ${DOWNLOADDIR}
+        rm -rf ${OUTPUTDIR} && mkdir -p ${OUTPUTDIR}
 
         cd runtime
         sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
@@ -47,9 +47,6 @@ jobs:
         cp artifacts/packages/Release/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${OUTPUTDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.DotNetAppHost.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILAsm.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/runtime.linux-riscv64.Microsoft.NETCore.ILDAsm.*.nupkg ${OUTPUTDIR}
         cd .. && rm -r runtime
 
     - name: Build aspnetcore
@@ -89,11 +86,11 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/') != true
       with:
         name: dotnet-sdk-linux-riscv64
-        path: "${{ github.workspace }}/output/*"
+        path: "${{ github.workspace }}/output/dotnet-sdk-*.tar.gz*"
 
     - name: Release
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          ${{ github.workspace }}/output/*
+          ${{ github.workspace }}/output/dotnet-sdk-*.tar.gz*
