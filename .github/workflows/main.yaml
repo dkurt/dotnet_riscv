@@ -45,8 +45,8 @@ jobs:
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
         cp artifacts/packages/Release/Shipping/dotnet-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
-        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${OUTPUTDIR}
-        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
+        cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cd .. && rm -r runtime
 
     - name: Build aspnetcore
@@ -60,7 +60,7 @@ jobs:
         mkdir -p ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
         cp artifacts/installers/Release/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-9.0.0-linux-riscv64.tar.gz
         cp artifacts/installers/Release/aspnetcore_base_runtime.version ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
-        cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${OUTPUTDIR}
+        cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Web.*.nupkg ${PACKAGESDIR}
         cd .. && rm -r aspnetcore
 
@@ -88,9 +88,17 @@ jobs:
         name: dotnet-sdk-linux-riscv64
         path: "${{ github.workspace }}/output/dotnet-sdk-*.tar.gz*"
 
+    - name: Upload packages
+      uses: actions/upload-artifact@v4
+      if: startsWith(github.ref, 'refs/tags/') != true
+      with:
+        name: dotnet-sdk-linux-riscv64
+        path: "${{ github.workspace }}/packages/*"
+
     - name: Release
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
           ${{ github.workspace }}/output/dotnet-sdk-*.tar.gz*
+          ${{ github.workspace }}/packages/*
