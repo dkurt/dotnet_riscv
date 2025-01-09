@@ -92,7 +92,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: startsWith(github.ref, 'refs/tags/') != true
       with:
-        name: dotnet-sdk-linux-riscv64
+        name: packages
         path: "${{ github.workspace }}/packages/*"
 
     - name: Release
