@@ -1,12 +1,12 @@
 name: Build .NET SDK (GCC)
 
-on: [workflow_dispatch]
+on: [workflow_dispatch, pull_request]
 
 jobs:
   build_with_gcc:
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
+        os: [ubuntu-22.04]
     runs-on: ${{ matrix.os }}
     env:
       PACKAGESDIR: ${{ github.workspace }}/packages
