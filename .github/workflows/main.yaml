@@ -22,9 +22,9 @@ jobs:
     - name: Clone repositories
       run: |
         rm -rf runtime aspnetcore sdk
-        git clone --depth 1 -b release/9.0 https://github.com/dotnet/runtime
-        git clone --depth 1 -b release/9.0 https://github.com/dotnet/aspnetcore --recurse-submodules
-        git clone --depth 1 -b release/9.0.1xx https://github.com/dotnet/sdk
+        git clone --depth 1 -b v9.0.0 https://github.com/dotnet/runtime
+        git clone https://github.com/dotnet/aspnetcore
+        git clone --depth 1 -b v9.0.100 https://github.com/dotnet/sdk
 
     - name: Update Node.js
       run: |
@@ -52,13 +52,16 @@ jobs:
     - name: Build aspnetcore
       run: |
         cd aspnetcore
+        git checkout 3e3c86b58acf0c911b3a17f3410bb5213544c0a7
+        git submodule update --init --recursive
+        sed -i "s|<AspNetCorePatchVersion>1|<AspNetCorePatchVersion>0|" eng/Versions.props
         sed -i "s|ppc64le|riscv64|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
         sed -i "s|\$(BaseIntermediateOutputPath)\$(DotNetRuntimeArchiveFileName)|${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}/dotnet-runtime-9.0.0-linux-riscv64.tar.gz|" src/Framework/App.Runtime/src/Microsoft.AspNetCore.App.Runtime.csproj
         ./eng/build.sh --pack --ci -c Release -arch riscv64
 
         cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
-        cp artifacts/installers/Release/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-9.0.0-linux-riscv64.tar.gz
+        cp artifacts/installers/Release/aspnetcore-runtime-*-linux-riscv64.tar.gz ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
         cp artifacts/installers/Release/aspnetcore_base_runtime.version ${DOWNLOADDIR}/aspnetcore/Runtime/${ASPNETCORE_VERSION}
         cp artifacts/packages/Release/Shipping/Microsoft.AspNetCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.DotNet.Web.*.nupkg ${PACKAGESDIR}
