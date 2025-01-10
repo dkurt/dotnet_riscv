@@ -6,7 +6,7 @@ jobs:
   build_with_gcc:
     strategy:
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-22.04, ubuntu-24.04]
     runs-on: ${{ matrix.os }}
     env:
       PACKAGESDIR: ${{ github.workspace }}/packages
