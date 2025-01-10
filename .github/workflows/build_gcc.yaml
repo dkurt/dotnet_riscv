@@ -6,7 +6,7 @@ jobs:
   build_with_gcc:
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
+        os: [ubuntu-22.04]
     runs-on: ${{ matrix.os }}
     env:
       PACKAGESDIR: ${{ github.workspace }}/packages
@@ -75,8 +75,8 @@ jobs:
 
     - name: Clone repositories
       run: |
-        git clone --depth 1 -b v9.0.0 https://github.com/dotnet/runtime
-        git clone --depth 1 -b v9.0.0 https://github.com/dotnet/aspnetcore --recurse-submodules
+        git clone --depth 1 -b release/9.0 https://github.com/dotnet/runtime
+        git clone --depth 1 -b release/9.0 https://github.com/dotnet/aspnetcore --recurse-submodules
         git clone --depth 1 -b v9.0.100 https://github.com/dotnet/sdk
 
     - name: Build runtime
