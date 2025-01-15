@@ -15,7 +15,7 @@ jobs:
       RUNTIME_VERSION: 9.0.0-rtm.24528.9
       SDK_VERSION: 9.0.100
       ASPNETCORE_VERSION: 9.0.0-rtm.24529.3
-      ROOTFS_DIR: /
+      ROOTFS_DIR: /usr/share/xuantie-gcc/sysroot
 
     steps:
     - name: Checkout
@@ -74,8 +74,8 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install gdown
         gdown https://drive.google.com/uc?id=1U3JaUqWyRYvlhfA3lVEfwu56em-Gwonl
-        mkdir xuantie-gcc && cd xuantie-gcc
-        tar -xf ../xuantie-gcc-v2.8.0.tar.gz
+        sudo mkdir /usr/share/xuantie-gcc && cd /usr/share/xuantie-gcc
+        sudo tar -xf ${{ github.workspace }}/xuantie-gcc-v2.8.0.tar.gz
 
     - name: Clone repositories
       run: |
@@ -88,13 +88,12 @@ jobs:
         mkdir -p ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}
         mkdir -p ${OUTPUTDIR}
-        export PATH=${{ github.workspace }}/xuantie-gcc/bin/:$PATH
 
         cd runtime
         git apply ../runtime.patch
         sed -i "s|WITH_RVV OFF|WITH_RVV ON|" src/native/external/zlib-ng.cmake
         sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
-        ./build.sh --ci -c Release --cross --arch riscv64 --gcc --cmakeargs -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/riscv64-071.toolchain.cmake
+        ./build.sh --ci -c Release --cross --arch riscv64 --gcc
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
