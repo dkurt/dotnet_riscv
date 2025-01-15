@@ -78,6 +78,7 @@ jobs:
 
         wget http://launchpadlibrarian.net/587312334/libkrb5-dev_1.19.2-2_riscv64.deb
         dpkg-deb -x libkrb5-dev_1.19.2-2_riscv64.deb ${ROOTFS_DIR}
+        mv ${ROOTFS_DIR}/usr/lib/riscv64-linux-gnu/* ${ROOTFS_DIR}/usr/lib
 
     - name: Clone repositories
       run: |
