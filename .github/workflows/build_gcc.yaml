@@ -63,7 +63,6 @@ jobs:
             locales \
             build-essential \
             crossbuild-essential-riscv64 \
-            libkrb5-dev:riscv64 \
             libssl-dev:riscv64 \
             libicu-dev:riscv64 \
             liblttng-ust-dev:riscv64 \
@@ -76,6 +75,9 @@ jobs:
         gdown https://drive.google.com/uc?id=1U3JaUqWyRYvlhfA3lVEfwu56em-Gwonl
         sudo mkdir /usr/share/xuantie-gcc && cd /usr/share/xuantie-gcc
         sudo tar -xf ${{ github.workspace }}/xuantie-gcc-v2.8.0.tar.gz
+
+        wget http://launchpadlibrarian.net/587312334/libkrb5-dev_1.19.2-2_riscv64.deb
+        dpkg-deb -x libkrb5-dev_1.19.2-2_riscv64.deb $ROOTFS_DIR
 
     - name: Clone repositories
       run: |
