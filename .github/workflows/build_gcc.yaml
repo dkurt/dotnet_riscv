@@ -15,7 +15,7 @@ jobs:
       RUNTIME_VERSION: 9.0.0-rtm.24528.9
       SDK_VERSION: 9.0.100
       ASPNETCORE_VERSION: 9.0.0-rtm.24529.3
-      ROOTFS_DIR: /usr/share/xuantie-gcc/sysroot
+      ROOTFS_DIR: /
 
     steps:
     - name: Checkout
@@ -75,10 +75,8 @@ jobs:
         gdown https://drive.google.com/uc?id=1U3JaUqWyRYvlhfA3lVEfwu56em-Gwonl
         sudo mkdir /usr/share/xuantie-gcc && cd /usr/share/xuantie-gcc
         sudo tar -xf ${{ github.workspace }}/xuantie-gcc-v2.8.0.tar.gz
-
-        wget http://launchpadlibrarian.net/587312334/libkrb5-dev_1.19.2-2_riscv64.deb
-        dpkg-deb -x libkrb5-dev_1.19.2-2_riscv64.deb ${ROOTFS_DIR}
-        mv ${ROOTFS_DIR}/usr/lib/riscv64-linux-gnu/* ${ROOTFS_DIR}/usr/lib
+        cd bin
+        for f in *; do cp "$f" "${f/unknown-linux/linux}"; done
 
     - name: Clone repositories
       run: |
@@ -95,9 +93,6 @@ jobs:
 
         cd runtime
         git apply ../runtime.patch
-        sed -i "s|riscv64-linux-gnu|riscv64-unknown-linux-gnu|" src/mono/mono/mini/helpers.c
-        sed -i "s|riscv64-linux-gnu|riscv64-unknown-linux-gnu|" src/mono/CMakeLists.txt
-        sed -i "s|riscv64-linux-gnu|riscv64-unknown-linux-gnu|" eng/common/cross/toolchain.cmake
         sed -i "s|WITH_RVV OFF|WITH_RVV ON|" src/native/external/zlib-ng.cmake
         sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
         ./build.sh --ci -c Release --cross --arch riscv64 --gcc
