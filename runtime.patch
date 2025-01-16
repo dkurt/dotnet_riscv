@@ -7,8 +7,8 @@ index 9a0e1f2b4..68d1ece3c 100644
  SCAN_BUILD_COMMAND="$(command -v "scan-build$desired_version" 2> /dev/null)"
 
 +if [ "$build_arch" = "riscv64" ]; then
-+    CC=/usr/share/xuantie-gcc/riscv64-unknown-linux-gnu-gcc
-+    CXX=/usr/share/xuantie-gcc/riscv64-unknown-linux-gnu-g++
++    CC=/usr/share/xuantie-gcc/bin/riscv64-unknown-linux-gnu-gcc
++    CXX=/usr/share/xuantie-gcc/bin/riscv64-unknown-linux-gnu-g++
 +fi
 +
  export CC CXX LDFLAGS SCAN_BUILD_COMMAND
