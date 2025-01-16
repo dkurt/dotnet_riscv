@@ -88,9 +88,11 @@ jobs:
         mkdir -p ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}
         mkdir -p ${OUTPUTDIR}
+        export PATH=${{ github.workspace }}/xuantie-gcc/bin:$PATH
 
         cd runtime
         git apply ../runtime.patch
+        sed -i '1s|^|set(CMAKE_TOOLCHAIN_FILE "${{ github.workspace }}/riscv64-071.toolchain.cmake")|' src/native/external/zlib-ng.cmake
         sed -i "s|WITH_RVV OFF|WITH_RVV ON|" src/native/external/zlib-ng.cmake
         sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
         ./build.sh --ci -c Release --cross --arch riscv64 --gcc --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true
