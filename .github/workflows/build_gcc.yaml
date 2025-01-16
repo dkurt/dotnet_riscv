@@ -62,6 +62,7 @@ jobs:
             cmake \
             locales \
             build-essential \
+            crossbuild-essential-riscv64 \
             libkrb5-dev:riscv64 \
             libssl-dev:riscv64 \
             libicu-dev:riscv64 \
