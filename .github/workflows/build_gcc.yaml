@@ -75,9 +75,6 @@ jobs:
         gdown https://drive.google.com/uc?id=1U3JaUqWyRYvlhfA3lVEfwu56em-Gwonl
         mkdir xuantie-gcc && cd xuantie-gcc
         tar -xf ${{ github.workspace }}/xuantie-gcc-v2.8.0.tar.gz
-        cd bin
-        for f in *; do cp "$f" "${f/unknown-linux/linux}"; done
-        cp riscv64-linux-* /usr/bin
 
     - name: Clone repositories
       run: |
@@ -95,7 +92,7 @@ jobs:
         git apply ../runtime.patch
         sed -i "s|WITH_RVV OFF|WITH_RVV ON|" src/native/external/zlib-ng.cmake
         sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
-        ./build.sh --ci -c Release --cross --arch riscv64 --gcc
+        ./build.sh --ci -c Release --cross --arch riscv64 --gcc --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
