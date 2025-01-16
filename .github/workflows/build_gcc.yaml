@@ -15,7 +15,7 @@ jobs:
       RUNTIME_VERSION: 9.0.0-rtm.24528.9
       SDK_VERSION: 9.0.100
       ASPNETCORE_VERSION: 9.0.0-rtm.24529.3
-      ROOTFS_DIR: /
+      ROOTFS_DIR: /usr/share/xuantie-gcc/sysroot
 
     steps:
     - name: Checkout
