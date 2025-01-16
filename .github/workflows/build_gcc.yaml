@@ -73,10 +73,11 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install gdown
         gdown https://drive.google.com/uc?id=1U3JaUqWyRYvlhfA3lVEfwu56em-Gwonl
-        sudo mkdir /usr/share/xuantie-gcc && cd /usr/share/xuantie-gcc
-        sudo tar -xf ${{ github.workspace }}/xuantie-gcc-v2.8.0.tar.gz
+        mkdir xuantie-gcc && cd xuantie-gcc
+        tar -xf ${{ github.workspace }}/xuantie-gcc-v2.8.0.tar.gz
         cd bin
         for f in *; do cp "$f" "${f/unknown-linux/linux}"; done
+        cp riscv64-linux-* /usr/bin
 
     - name: Clone repositories
       run: |
@@ -89,7 +90,6 @@ jobs:
         mkdir -p ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}
         mkdir -p ${OUTPUTDIR}
-        export PATH=/usr/share/xuantie-gcc/bin/:$PATH
 
         cd runtime
         git apply ../runtime.patch
