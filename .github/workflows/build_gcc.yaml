@@ -80,13 +80,13 @@ jobs:
     - name: Clone repositories
       run: |
         git clone --depth 1 -b zlib_rvv_071 https://github.com/dkurt/runtime
-        # git clone --depth 1 -b release/9.0 https://github.com/dotnet/aspnetcore --recurse-submodules
-        # git clone --depth 1 -b v9.0.100 https://github.com/dotnet/sdk
-    
+        git clone --depth 1 -b release/9.0 https://github.com/dotnet/aspnetcore --recurse-submodules
+        git clone --depth 1 -b v9.0.100 https://github.com/dotnet/sdk
+
     - name: Build zlib
       run: |
         export PATH=${{ github.workspace }}/xuantie-gcc/bin/:$PATH
-        cmake -DCMAKE_TOOLCHAIN_FILE=riscv64-071.toolchain.cmake \
+        cmake -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/riscv64-071.toolchain.cmake \
           -DZLIB_COMPAT=ON \
           -DZLIB_ENABLE_TESTS=OFF \
           -DZLIBNG_ENABLE_TESTS=OFF \
