@@ -15,7 +15,7 @@ jobs:
       RUNTIME_VERSION: 9.0.0-rtm.24528.9
       SDK_VERSION: 9.0.100
       ASPNETCORE_VERSION: 9.0.0-rtm.24529.3
-      ROOTFS_DIR: /usr/share/xuantie-gcc/sysroot
+      ROOTFS_DIR: /
 
     steps:
     - name: Checkout
@@ -74,14 +74,30 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install gdown
         gdown https://drive.google.com/uc?id=1U3JaUqWyRYvlhfA3lVEfwu56em-Gwonl
-        sudo mkdir /usr/share/xuantie-gcc && cd /usr/share/xuantie-gcc
-        sudo tar -xf ${{ github.workspace }}/xuantie-gcc-v2.8.0.tar.gz
+        mkdir xuantie-gcc && cd xuantie-gcc
+        tar -xf ../xuantie-gcc-v2.8.0.tar.gz
 
     - name: Clone repositories
       run: |
-        git clone --depth 1 -b v9.0.0 https://github.com/dotnet/runtime
+        git clone --depth 1 -b zlib_rvv_071 https://github.com/dkurt/runtime
         # git clone --depth 1 -b release/9.0 https://github.com/dotnet/aspnetcore --recurse-submodules
         # git clone --depth 1 -b v9.0.100 https://github.com/dotnet/sdk
+    
+    - name: Build zlib
+      run: |
+        export PATH=${{ github.workspace }}/xuantie-gcc/bin/:$PATH
+        cmake -DCMAKE_TOOLCHAIN_FILE=riscv64-071.toolchain.cmake \
+          -DZLIB_COMPAT=ON \
+          -DZLIB_ENABLE_TESTS=OFF \
+          -DZLIBNG_ENABLE_TESTS=OFF \
+          -DZ_PREFIX=ON \
+          -DWITH_RVV=ON \
+          -DWITH_ARMV6=OFF \
+          -DWITH_NEON=OFF \
+          -DBUILD_SHARED_LIBS=ON \
+          -S runtime/src/native/external/zlib-ng -B zlib_build
+        cmake --build zlib_build
+        sudo cmake --install zlib_build
 
     - name: Build runtime
       run: |
@@ -91,10 +107,7 @@ jobs:
         export PATH=${{ github.workspace }}/xuantie-gcc/bin:$PATH
 
         cd runtime
-        git apply ../runtime.patch
-        sed -i "s|WITH_RVV OFF|WITH_RVV ON|" src/native/external/zlib-ng.cmake
-        sed -i "s|<PublishTrimmed>true</PublishTrimmed>|<PublishTrimmed Condition=\"\'$\(TargetArchitecture\)\' != \'riscv64\'\">true</PublishTrimmed>|" src/coreclr/tools/aot/crossgen2/crossgen2_publish.csproj
-        ./build.sh --ci -c Release --cross --arch riscv64 --gcc
+        ./build.sh --ci -c Release --cross --arch riscv64 --gcc --cmakeargs -DCLR_CMAKE_USE_SYSTEM_ZLIB=true
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Host.linux-riscv64.*.nupkg ${PACKAGESDIR}
         cp artifacts/packages/Release/Shipping/Microsoft.NETCore.App.Runtime.linux-riscv64.*.nupkg ${PACKAGESDIR}
         mkdir -p ${DOWNLOADDIR}/Runtime/${RUNTIME_VERSION}
