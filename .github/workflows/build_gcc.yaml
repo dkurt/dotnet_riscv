@@ -76,6 +76,7 @@ jobs:
         gdown https://drive.google.com/uc?id=1U3JaUqWyRYvlhfA3lVEfwu56em-Gwonl
         mkdir xuantie-gcc && cd xuantie-gcc
         tar -xf ../xuantie-gcc-v2.8.0.tar.gz
+        rm ../xuantie-gcc-v2.8.0.tar.gz
 
     - name: Clone repositories
       run: |
@@ -98,6 +99,8 @@ jobs:
           -S runtime/src/native/external/zlib-ng -B zlib_build
         cmake --build zlib_build
         sudo cmake --install zlib_build
+        rm -r ${{ github.workspace }}/xuantie-gcc
+        rm -r zlib_build
 
     - name: Build runtime
       run: |
