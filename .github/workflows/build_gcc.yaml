@@ -92,6 +92,7 @@ jobs:
           -DZLIB_ENABLE_TESTS=OFF \
           -DZLIBNG_ENABLE_TESTS=OFF \
           -DWITH_RVV=ON \
+          -DBUILD_SHARED_LIBS=OFF \
           -S runtime/src/native/external/zlib-ng -B zlib_build
         cmake --build zlib_build
         sudo cmake --install zlib_build
